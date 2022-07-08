@@ -4,21 +4,23 @@ metadata:
   name: example
 spec:
   generators:
-    - git:
-        repoURL: https://github.com/Emc285/demo-applicationset-values.git
-        revision: main
-        directories:
-          - path: app/config
-#        files:
-#          - path: "config/**.yaml"
-    - list:
-        elements:
-          - namespace: tst
-            name: demo-applicationset-values
-          - namespace: cq
-            name: demo-applicationset-values
-          - namespace: prd
-            name: demo-applicationset-values
+    - matrix:
+        generators:
+          - git:
+              repoURL: https://github.com/Emc285/demo-applicationset-values.git
+              revision: main
+              directories:
+                - path: app/config
+      #        files:
+      #          - path: "config/**.yaml"
+          - list:
+              elements:
+                - namespace: tst
+                  name: demo-applicationset-values
+                - namespace: cq
+                  name: demo-applicationset-values
+                - namespace: prd
+                  name: demo-applicationset-values
   template:
     metadata:
       name: '{{name}}-example'
