@@ -11,6 +11,14 @@ spec:
           - path: app/config
 #        files:
 #          - path: "config/**.yaml"
+    - list:
+        elements:
+          - namespace: tst
+            name: demo-applicationset-values
+          - namespace: cq
+            name: demo-applicationset-values
+          - namespace: prd
+            name: demo-applicationset-values
   template:
     metadata:
       name: '{{name}}-example'
@@ -27,4 +35,4 @@ spec:
         path: app
       destination:
         server: https://kubernetes.default.svc
-        namespace: tst
+        namespace: '{{ namespace }}'
