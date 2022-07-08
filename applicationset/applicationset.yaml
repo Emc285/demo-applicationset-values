@@ -7,8 +7,10 @@ spec:
     - git:
         repoURL: https://github.com/Emc285/demo-applicationset-values.git
         revision: main
-        files:
-          - path: "config/**.yaml"
+        directories:
+          - path: app/config
+#        files:
+#          - path: "config/**.yaml"
   template:
     metadata:
       name: '{{name}}-example'
@@ -16,13 +18,13 @@ spec:
       project: default
       source:
         helm:
-          valueFiles:
-            - values.yaml
-          values: |-
-            {{values}}
-        repoURL: https://github.com/Emc285/JT-values-argocd.git
+#          valueFiles:
+#            - values.yaml
+#          values: |-
+#            {{values}}
+        repoURL: https://github.com/Emc285/demo-applicationset-values.git
         targetRevision: main
-        path: "config/**.yaml"
+        path: app
       destination:
         server: https://kubernetes.default.svc
         namespace: tst
