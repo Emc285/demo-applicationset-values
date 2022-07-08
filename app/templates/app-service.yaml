@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "cgd-corporateloans-cde-service.fullname" . }}
+  name: {{ include "demo-applicationset-values.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "cgd-corporateloans-cde-service.labels" . | nindent 4 }}
+    {{- include "demo-applicationset-values.labels" . | nindent 4 }}
   {{- if eq .Values.service.type "LoadBalancer"}}
   annotations:
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
@@ -15,4 +15,4 @@ spec:
     - port: {{ .Values.service.port }}
       name: http
   selector:
-    {{- include "cgd-corporateloans-cde-service.selectorLabels" . | nindent 4 }}
+    {{- include "demo-applicationset-values.selectorLabels" . | nindent 4 }}

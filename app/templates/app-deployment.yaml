@@ -1,29 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "cgd-corporateloans-cde-service.fullname" . }}
+  name: {{ include "demo-applicationset-values.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "cgd-corporateloans-cde-service.labels" . | nindent 4 }}
+    {{- include "demo-applicationset-values.labels" . | nindent 4 }}
 spec:
 {{/*  {{- if not  .Values.autoscaling.enabled }}*/}}
   replicas: {{ .Values.replicaCount }}
 {{/*  {{- end }}*/}}
   selector:
     matchLabels:
-      {{- include "cgd-corporateloans-cde-service.selectorLabels" . | nindent 6 }}
+      {{- include "demo-applicationset-values.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "cgd-corporateloans-cde-service.selectorLabels" . | nindent 8 }}
+        {{- include "demo-applicationset-values.selectorLabels" . | nindent 8 }}
       {{- if .Values.release.rollme }}
       annotations:
         rollme: {{ randAlphaNum 5 | quote }}
       {{- end }}
     spec:
-      {{- if .Values.deployment.nodeSelector }}
-      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.deployment.nodeSelector "context" $) | nindent 8 }}
-      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: {{ .Values.image.repository }}{{ .Values.image.name }}:{{ .Values.release.appVersion }}
@@ -37,159 +34,8 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8080
-          env:
-            - name: cgd.cde.security.enabled
-              value: {{ .Values.security.enabled | quote }}
-
-            - name: keycloak.enabled
-              value: {{ .Values.security.keycloak.enabled | quote }}
-            - name: keycloak.resource
-              value: {{ .Values.security.keycloak.resource }}
-            - name: keycloak.auth-server-url
-              value: {{ index .Values "security" "keycloak" "auth-server-url" }}
-            {{- if .Values.security.keycloak.existingSecret }}
-            {{- $secret := dict "resource" "keycloak.credentials.secret" "key" "secret" "context" .Values.security.keycloak }}
-            {{- include "cgd-corporateloans.common.existingSecret.render" $secret | nindent 12 }}
-            {{- else }}
-            - name: keycloak.credentials.secret
-              value: {{ .Values.security.keycloak.secret }}
-            {{- end }}
-            - name: cgd.oa.security.audit.enabled
-              value: {{ .Values.oa.security.audit.enabled | quote }}
-            - name: cgd.oa.security.audit.threshHold
-              value: {{ .Values.oa.security.audit.threshHold | quote }}
-            - name: cgd.oa.security.audit.recordUnauthenticatedRequests
-              value: {{ .Values.oa.security.audit.recordUnauthenticatedRequests | quote }}
-
-            - name: server.tomcat.threads.max
-              value: {{ index .Values "tomcat" "max-threads" | quote }}
-
-            - name: cgd.oa.datasource.url
-              value: {{ .Values.oa.database.url }}
-            {{- if .Values.oa.database.existingSecret }}
-            {{- $secret := dict "resource" "cgd.oa.datasource.username" "key" "username" "context" .Values.oa.database }}
-            {{- include "cgd-corporateloans.common.existingSecret.render" $secret | nindent 12 }}
-            {{- $secret = dict "resource" "cgd.oa.datasource.password" "key" "password" "context" .Values.oa.database }}
-            {{- include "cgd-corporateloans.common.existingSecret.render" $secret | nindent 12 }}
-            {{- else }}
-            - name: cgd.oa.datasource.username
-              value: {{ .Values.oa.database.username | b64dec | trim }}
-            - name: cgd.oa.datasource.password
-              value: {{ .Values.oa.database.password | b64dec | trim }}
-            {{- end }}
-            - name: cgd.oa.datasource.schema
-              value: {{ .Values.oa.database.schema }}
-
-            - name: spring.datasource.hikari.maximum-pool-size
-              value:  {{ index .Values "hikari" "maximum-pool-size" | quote }}
-
-            - name: spring.datasource.url
-              value: {{ .Values.database.url }}
-            {{- if .Values.database.existingSecret }}
-            {{- $secret := dict "resource" "spring.datasource.username" "key" "username" "context" .Values.database }}
-            {{- include "cgd-corporateloans.common.existingSecret.render" $secret | nindent 12 }}
-            {{- $secret = dict "resource" "spring.datasource.password" "key" "password" "context" .Values.database }}
-            {{- include "cgd-corporateloans.common.existingSecret.render" $secret | nindent 12 }}
-            {{- else }}
-            - name: spring.datasource.username
-              value: {{ .Values.database.username | b64dec | trim }}
-            - name: spring.datasource.password
-              value: {{ .Values.database.password | b64dec | trim }}
-            {{- end }}
-            - name: logstash.enabled
-              value: {{ .Values.logstash.enabled | quote }}
-            - name: cgd.simulation.url
-              value: {{ .Values.simulation.url }}
-            - name: cgd.clientView.url
-              value: {{ .Values.clientView.url }}
-            - name: cgd.simulator.url
-              value: {{ .Values.simulator.url }}
-
-            - name: management.metrics.tags.application
-              value: {{ .Values.management.metrics.applicationName }}
-            - name: management.endpoint.metrics.enabled
-              value: {{ .Values.management.metrics.enabled | quote}}
-            - name: management.metrics.export.prometheus.enabled
-              value: {{ .Values.management.metrics.export.prometheus.enabled | quote }}
-            - name: management.endpoint.prometheus.enabled
-              value: {{ .Values.management.endpoint.prometheus.enabled | quote }}
-            - name: management.metrics.export.elastic.enabled
-              value: {{ .Values.management.metrics.export.elastic.enabled | quote }}
-            - name: management.metrics.export.elastic.host
-              value: {{ .Values.management.metrics.export.elastic.host }}
-            - name: management.metrics.export.elastic.index
-              value: {{ .Values.management.metrics.export.elastic.index }}
-
-            {{- if .Values.elasticApm.deploy }}
-            - name: ELASTIC_APM_ENABLED
-              value: {{ .Values.elasticApm.enabled | quote}}
-            - name: ELASTIC_APM_APPLICATION_PACKAGES
-              value: {{ .Values.elasticApm.applicationPackages }}
-            - name: ELASTIC_APM_ENVIRONMENT
-              value: {{ .Release.Namespace }}
-            - name: ELASTIC_APM_LOG_LEVEL
-              value: {{ .Values.elasticApm.logLevel }}
-            - name: ELASTIC_APM_LOG_FORMAT_SOUT
-              value: {{ .Values.elasticApm.logFormatStdout }}
-            - name: ELASTIC_APM_LOG_FORMAT_FILE
-              value: {{ .Values.elasticApm.logFormatFile }}
-            - name: ELASTIC_APM_SERVER_URL
-              value: {{ .Values.elasticApm.serverUrl }}
-            - name: ELASTIC_APM_SERVICE_NAME
-              value: {{ .Chart.Name }}
-            - name: JAVA_TOOL_OPTIONS
-              value: {{ .Values.elasticApm.javaToolOptions }}
-            {{- end }}
-
-          volumeMounts:
-            - mountPath: {{ .Values.elasticApm.volume.mountPath }}
-              name: {{ .Values.elasticApm.volume.name }}
-          {{- if .Values.readinessProbe.enabled }}
-          readinessProbe:
-            httpGet:
-              path: {{ .Values.readinessProbe.path }}
-              port: {{ .Values.readinessProbe.port }}
-            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
-            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
-            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
-            successThreshold: {{ .Values.readinessProbe.successThreshold }}
-          {{- end }}
-
-          {{- if .Values.livenessProbe.enabled }}
-          livenessProbe:
-            httpGet:
-              path: {{ .Values.livenessProbe.path }}
-              port: {{ .Values.livenessProbe.port }}
-            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
-            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
-            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
-            successThreshold: {{ .Values.livenessProbe.successThreshold }}
-          {{- end }}
-
-          {{- if .Values.startupProbe.enabled }}
-          startupProbe:
-            httpGet:
-              path: {{ .Values.startupProbe.path }}
-              port: {{ .Values.startupProbe.port }}
-            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
-            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
-          {{- end }}
-      {{- if .Values.elasticApm.deploy }}
-      initContainers:
-        - command:
-            {{- range .Values.elasticApm.command }}
-            - {{ . }}
-          {{- end }}
-          image: {{ .Values.elasticApm.image.name }}
-          imagePullPolicy: {{ .Values.elasticApm.image.pullPolicy }}
-          name: {{ .Values.elasticApm.containerName }}
-          volumeMounts:
-            - mountPath: {{ .Values.elasticApm.volume.mountPath }}
-              name: {{ .Values.elasticApm.volume.name }}
-      {{- end }}
+          env: []
       volumes:
-        - emptyDir: {}
-          name: {{ .Values.elasticApm.volume.name }}
       {{- if .Values.image.pullSecret }}
       imagePullSecrets:
         {{- range .Values.image.pullSecret }}

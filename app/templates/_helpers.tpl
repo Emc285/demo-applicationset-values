@@ -2,7 +2,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "cgd-corporateloans-cde-service.name" -}}
+{{- define "demo-applicationset-values.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
@@ -16,7 +16,7 @@ Expand the name of the chart.
 {{/* Wiremock
 Expand the name of the chart.
 */}}
-{{- define "cgd-corporateloans-cde-service-wiremock.name" -}}
+{{- define "demo-applicationset-values-wiremock.name" -}}
 {{- default (printf "%s-%s" .Chart.Name "wiremock") .Values.wiremock.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
@@ -25,7 +25,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "cgd-corporateloans-cde-service.fullname" -}}
+{{- define "demo-applicationset-values.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -56,7 +56,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "cgd-corporateloans-cde-service-wiremock.fullname" -}}
+{{- define "demo-applicationset-values-wiremock.fullname" -}}
 {{- if .Values.wiremock.fullnameOverride -}}
 {{- .Values.wiremock.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -72,7 +72,7 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "cgd-corporateloans-cde-service.chart" -}}
+{{- define "demo-applicationset-values.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
@@ -86,16 +86,16 @@ Create chart name and version as used by the chart label.
 {{/* Wiremock
 Create chart name and version as used by the chart label.
 */}}
-{{- define "cgd-corporateloans-cde-service-wiremock.chart" -}}
+{{- define "demo-applicationset-values-wiremock.chart" -}}
 {{- printf "%s-%s-%s" .Chart.Name "wiremock" .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
 Common labels
 */}}
-{{- define "cgd-corporateloans-cde-service.labels" -}}
-helm.sh/chart: {{ include "cgd-corporateloans-cde-service.chart" . }}
-{{ include "cgd-corporateloans-cde-service.selectorLabels" . }}
+{{- define "demo-applicationset-values.labels" -}}
+helm.sh/chart: {{ include "demo-applicationset-values.chart" . }}
+{{ include "demo-applicationset-values.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -117,9 +117,9 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/* Wiremock
 Common labels
 */}}
-{{- define "cgd-corporateloans-cde-service-wiremock.labels" -}}
-helm.sh/chart: {{ include "cgd-corporateloans-cde-service-wiremock.chart" . }}
-{{ include "cgd-corporateloans-cde-service-wiremock.selectorLabels" . }}
+{{- define "demo-applicationset-values-wiremock.labels" -}}
+helm.sh/chart: {{ include "demo-applicationset-values-wiremock.chart" . }}
+{{ include "demo-applicationset-values-wiremock.selectorLabels" . }}
 {{- if .Values.release.appVersion }}
 app.kubernetes.io/version: {{ .Values.release.appVersion | quote }}
 {{- end }}
@@ -129,8 +129,8 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "cgd-corporateloans-cde-service.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "cgd-corporateloans-cde-service.name" . }}
+{{- define "demo-applicationset-values.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "demo-applicationset-values.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
@@ -145,17 +145,17 @@ app.kubernetes.io/instance: cgd-corporateloans-cde-engine-service
 {{/* Wiremock
 Selector labels
 */}}
-{{- define "cgd-corporateloans-cde-service-wiremock.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "cgd-corporateloans-cde-service-wiremock.name" . }}
+{{- define "demo-applicationset-values-wiremock.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "demo-applicationset-values-wiremock.name" . }}
 app.kubernetes.io/instance: {{ printf "%s-%s" .Release.Name "wiremock" }}
 {{- end -}}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "cgd-corporateloans-cde-service.serviceAccountName" -}}
+{{- define "demo-applicationset-values.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create -}}
-    {{ default (include "cgd-corporateloans-cde-service.fullname" .) .Values.serviceAccount.name }}
+    {{ default (include "demo-applicationset-values.fullname" .) .Values.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}

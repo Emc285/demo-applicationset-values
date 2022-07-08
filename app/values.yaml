@@ -13,13 +13,20 @@ autoscaling:
 
 resources:
   requests:
-    cpu: ""
-    memory: ""
+    cpu: 10m
+    memory: 60Mi
   limits:
-    cpu: ""
-    memory: ""
+    cpu: 100m
+    memory: 100Mi
 
 image:
-  repository: ""
+  registry: docker.io
+  repository: hello-world
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 8080
+
 
 
