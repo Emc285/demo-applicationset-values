@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: example
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/Emc285/demo-applicationset-values.git
+        revision: main
+        files:
+          - path: "config/**.yaml"
+  template:
+    metadata:
+      name: '{{name}}-example'
+    spec:
+      project: default
+      source:
+        helm:
+          valueFiles:
+            - values.yaml
+          values: |-
+            {{values}}
+        repoURL: https://github.com/Emc285/JT-values-argocd.git
+        targetRevision: main
+        path: "config/**.yaml"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: tst

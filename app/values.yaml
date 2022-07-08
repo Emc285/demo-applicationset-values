@@ -1,0 +1,25 @@
+release:
+  rollme: true
+  appVersion: latest
+
+replicaCount: 2
+
+autoscaling:
+  enabled: false
+  minReplicas: ""
+  maxReplicas: ""
+  targetMemoryUtilizationPercentage: ""
+  targetCPUUtilizationPercentage: ""
+
+resources:
+  requests:
+    cpu: ""
+    memory: ""
+  limits:
+    cpu: ""
+    memory: ""
+
+image:
+  repository: ""
+
+
